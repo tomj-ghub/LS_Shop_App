@@ -1,0 +1,91 @@
+﻿<Window x:Class="LS_Shop_App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:LS_Shop_App.ViewModels"
+        xmlns:views="clr-namespace:LS_Shop_App.Views"
+        xmlns:converters="clr-namespace:LS_Shop_App.Utilities.Converters"
+        mc:Ignorable="d"
+        WindowStyle="SingleBorderWindow"
+        Height="625" 
+        Width="1200"
+        Icon="/Resources/birdLogo.ico" >
+
+    <Window.Resources>
+
+        <DataTemplate x:Name="manageSignsViewTemplate" DataType="{x:Type viewmodels:ManageSignsViewModel}">
+            <views:ManageSignsView DataContext="{Binding ElementName=manageSignsViewTemplate}"/>
+        </DataTemplate>
+        <DataTemplate x:Name="buildBoardsViewTemplate" DataType="{x:Type viewmodels:BuildBoardsViewModel}">
+            <views:BuildBoardsView DataContext="{Binding ElementName=buildBoardsViewTemplate}"/>
+        </DataTemplate>
+        <converters:ImagePathToImageSourceConverter x:Key="ImagePathConverter" />
+    </Window.Resources>
+    
+    <Grid>
+
+        <Grid Background="White">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Name="HeaderGrid"
+              Background="DarkGray"
+              Grid.ColumnSpan="99">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Name="HeaderLogo"
+                       Grid.Column="0"
+                       Grid.Row="0"
+                       Width="120"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Content="LILY &amp; SPARROW" FontFamily="Californian FB"/>
+
+                <Button Name="OpenJobs_HeaderButton"
+                        Grid.Column="2"
+                        Content="Open Jobs" Click="OpenJobs_HeaderButton_Click" 
+                        IsEnabled="False"/>
+
+                <Button Name="Inventory_HeaderButton"
+                        Grid.Column="3"
+                        Content="Inventory" Click="Inventory_HeaderButton_Click" 
+                        IsEnabled="False"/>
+
+                <Button Name="ManageSigns_HeaderButton"
+                        Grid.Column="4"
+                        Content="Manage Signs" Click="ManageSigns_HeaderButton_Click" />
+                
+                <Button Name="BuildBoards_HeaderButton"
+                        Grid.Column="5"
+                        Content="Build Boards" Click="BuildBoards_HeaderButton_Click"/>
+
+            </Grid>
+
+            <!-- Main Content Grid -->
+            <Grid Grid.Row="1">
+
+                <ContentControl Name="MainWindowContentControl"
+                                Content="{Binding}"
+                                x:FieldModifier="public" Grid.ColumnSpan="2"/>
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+</Window>
