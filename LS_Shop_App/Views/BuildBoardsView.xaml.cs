@@ -3,23 +3,14 @@ using LS_Shop_App.Models;
 using LS_Shop_App.Utilities;
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
-using MigraDoc.Rendering;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LS_Shop_App.Views
 {
@@ -30,6 +21,7 @@ namespace LS_Shop_App.Views
     {
         Database db;
         List<PickListItem> pickListItems;
+        CreateBoardInputWindow boardInputs;
 
         public BuildBoardsView()
         {
@@ -199,6 +191,7 @@ namespace LS_Shop_App.Views
 
         private void CreateBoardsButton_Click(object sender, RoutedEventArgs e)
         {
+
             //this is everything that has a definition "PrintTwice"
             List<PickListItem> selectedItems_2Prints = new List<PickListItem>();
             //this is everything that has no definition of "PrintTwice"
@@ -211,6 +204,12 @@ namespace LS_Shop_App.Views
                 else if (item.IsSelected) { selectedItems_1Print.Add(item); }
             }
 
+            if (selectedItems_2Prints.Any() || selectedItems_1Print.Any()) 
+            {
+                boardInputs = new CreateBoardInputWindow();
+                boardInputs.ShowDialog();
+            }
+
             int boardNum = 1;
             if (selectedItems_1Print.Count > 0)
             {
@@ -220,14 +219,12 @@ namespace LS_Shop_App.Views
                 {
                     var colorSpecificEnumerable = from PickListItem item in selectedItems_1Print where item.Color == color select item;
                     List<PickListItem> colorSpecificList = colorSpecificEnumerable.ToList();
-                    ShowError("Creating board files in C:\\Users\\Public\\Documents\\LS_Shop_App\\Boards2Print - this may take a few...");
                     boardNum = CallBoardBuilder(colorSpecificList, boardNum, color);
                 }
             }
 
             if (selectedItems_2Prints.Count > 0)
             {
-                ShowError("Creating board files in C:\\Users\\Public\\Documents\\LS_Shop_App\\Boards2Print - this may take a few...");
                 boardNum = CallBoardBuilder(selectedItems_2Prints, boardNum, "2Prints");
             }
             RefreshDataGrid();
@@ -248,10 +245,10 @@ namespace LS_Shop_App.Views
             }
 
             //define the board name
-            string currentDate = DateTime.Now.ToString("MM.dd.yy");
+            string currentDate = DateTime.Now.ToString("MM.dd.yy.ss");
             string boardName = currentDate + "-" + i + "-" + color;
 
-            BoardBuilder boardBuilder = new BoardBuilder(96, 48, boardName);
+            BoardBuilder boardBuilder = new BoardBuilder(boardInputs.boardWidth, boardInputs.boardHeight, boardName, boardInputs.boardMargin, boardInputs.lineMargin);
             boardBuilder.Fit(sanitizedItems);
             i++;
             CallBoardBuilder(sanitizedItems, i, color);

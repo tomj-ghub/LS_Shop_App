@@ -6,12 +6,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using System.Xml.Linq;
+
+// Copyright (C) 2024 Lily and Sparrow
+// This program is free software: you can redistribute it and/or modify it under the terms of
+// the GNU Affero General Public License as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any later version.
 
 namespace LS_Shop_App.Data
 {
@@ -42,18 +48,6 @@ namespace LS_Shop_App.Data
                 ErrorLogger.Log(e.ToString());
                 return;
             }
-
-            //try
-            //{
-            //    using (IDbConnection cnn = new SQLiteConnection(GetDbConnectionString()))
-            //    {
-            //        cnn.Execute($"ALTER TABLE SignDefinitions ADD COLUMN PrintInColor INT");
-            //    }
-            //}
-            //catch (Exception)
-            //{
-            //    //eat the exception for now
-            //}
         }
 
         public void CreatePickListItemsTable()

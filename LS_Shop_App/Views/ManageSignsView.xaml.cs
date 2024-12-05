@@ -23,6 +23,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Database = LS_Shop_App.Data.Database;
 
+// Copyright (C) 2024 Lily and Sparrow
+// This program is free software: you can redistribute it and/or modify it under the terms of
+// the GNU Affero General Public License as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any later version.
+
 namespace LS_Shop_App.Views
 {
 

@@ -1,0 +1,38 @@
+﻿<!--Copyright (C) 2024 Lily and Sparrow
+     This program is free software: you can redistribute it and/or modify it under the terms of
+     the GNU Affero General Public License as published by the Free Software Foundation, either
+     version 3 of the License, or (at your option) any later version.-->
+<Window x:Class="LS_Shop_App.Views.CreateBoardInputWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LS_Shop_App.Views"
+        mc:Ignorable="d"
+        Title="Board Settings" Height="200" Width="300" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Content="Board Width (in.)"/>
+        <TextBox Grid.Row="0" Name="BoardWidth" Width="50" Margin="5" Text="96" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+
+        <Label Grid.Row="1" Content="Board Height (in.)"/>
+        <TextBox Grid.Row="1" Name="BoardHeight" Width="50" Margin="5" Text="48" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+
+        <Label Grid.Row="2" Content="Line Width (in.)"/>
+        <TextBox Grid.Row="2" Name="LineMargin" Width="50" Margin="5" Text ="0" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+
+        <!--
+        <Label Grid.Row="3" Content="Board Margin (in.)"/>
+        <TextBox Grid.Row="3" Name="BoardMargin" Width="50" Margin="5" Text ="0" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+        -->
+        
+        <Button Grid.Row="4" Content="OK" Width="75" Margin="5" Click="Button_Click" />
+    </Grid>
+</Window>

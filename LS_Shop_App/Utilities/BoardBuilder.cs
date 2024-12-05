@@ -9,14 +9,22 @@ using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using iText.Kernel.Font;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Xobject;
 using LS_Shop_App.Data;
 using LS_Shop_App.Models;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Image = SixLabors.ImageSharp.Image;
+
+// Copyright (C) 2024 Lily and Sparrow
+// This program is free software: you can redistribute it and/or modify it under the terms of
+// the GNU Affero General Public License as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any later version.
 
 namespace LS_Shop_App.Utilities
 {
@@ -27,20 +35,21 @@ namespace LS_Shop_App.Utilities
     {
         public PickListItem Root { get; private set; }
 
-        XGraphics gfx;
         string boardName;
         string outputFilePath;
         double canvasWidthIn, canvasHeightIn;
+        float lineWidth;
         List<PickListItem> signs2Pars;
         Database db = new Database();
 
         //this is the size of the board
-        public BoardBuilder(double canvasWidthIn, double canvasHeightIn, string boardName) 
-        { 
-            Root = new PickListItem { X = 0.405, Y = 0.405, Width = canvasWidthIn, Height = canvasHeightIn };
+        public BoardBuilder(double canvasWidthIn, double canvasHeightIn, string boardName, double boarderMargin, double lineWidth) 
+        {
+            Root = new PickListItem { X = 0, Y = canvasHeightIn, Width = canvasWidthIn, Height = canvasHeightIn };
             this.boardName = boardName;
             this.canvasWidthIn= canvasWidthIn;
             this.canvasHeightIn= canvasHeightIn;
+            this.lineWidth = (float)lineWidth;
         }
 
         public void Fit(List<PickListItem> signs)
@@ -68,7 +77,7 @@ namespace LS_Shop_App.Utilities
             if (!String.IsNullOrEmpty(root.BoardName))
             {
                 var down = FindNode(root.Down, width, height);
-                var right = FindNode(root.Right, width, height);          
+                var right = FindNode(root.Right, width, height);
 
                 return right ?? down;
             }
@@ -84,7 +93,7 @@ namespace LS_Shop_App.Utilities
         private PickListItem SplitNode(PickListItem node, double width, double height)
         {
             node.BoardName = this.boardName;
-            node.Down = new PickListItem { X = node.X, Y = node.Y + height, Width = node.Width, Height = node.Height - height };
+            node.Down = new PickListItem { X = node.X, Y = node.Y - height, Width = node.Width, Height = node.Height - height };
             node.Right = new PickListItem { X = node.X + width, Y = node.Y, Width = node.Width - width, Height = height };
             return node;
         }
@@ -93,43 +102,31 @@ namespace LS_Shop_App.Utilities
         {
             try
             {
-                this.outputFilePath = Paths.Boards2Print + boardName + ".pdf";
-                PdfDocument pdf = new PdfDocument();
-                PdfPage page = pdf.AddPage();
-                page.Width = XUnit.FromInch(canvasWidthIn);
-                page.Height = XUnit.FromInch(canvasHeightIn);
-                this.gfx = XGraphics.FromPdfPage(page);
-
-                int imageIndex = 0;
+                PdfWriter writer = new PdfWriter(Paths.Boards2Print + boardName + ".pdf");
+                PdfDocument pdfDocument = new PdfDocument(writer);
+                // Set the size of the new page
+                PageSize pageSize = new PageSize((float)canvasWidthIn*72, (float)canvasHeightIn*72); // Adjust the size as necessary
+                PdfPage page = pdfDocument.AddNewPage(pageSize);
+                PdfCanvas pdfCanvas = new PdfCanvas(page);
                 foreach (PickListItem item in signs2Pars)
                 {
                     if (item.Fit != null)
                     {
-                        Image<Rgba32> currentSignImage = Image.Load<Rgba32>(item.ImagePath);
-                        double widthPts1 = ((double)currentSignImage.Width / 300) * 72;
-                        double heightPts1 = ((double)currentSignImage.Height / 300) * 72;
+                        PdfDocument srcPdf = new PdfDocument(new PdfReader(item.ImagePath));
+                        PdfFormXObject pageCopy = srcPdf.GetFirstPage().CopyAsFormXObject(pdfDocument);
 
-                        string tempFilePath = Paths.Boards2Print + imageIndex + "RawBoardFile.png";
-                        currentSignImage.Save(tempFilePath);
-                        DrawImage(gfx, tempFilePath, item.Fit.X * 72, item.Fit.Y * 72, widthPts1, heightPts1);
-                        // Delete the temporary image file
-                        File.Delete(tempFilePath);
-                        currentSignImage.Dispose();
-                        imageIndex++;
+                        pdfCanvas.AddXObjectAt(pageCopy, (float)(item.Fit.X*72)+(lineWidth*72), (float)((item.Fit.Y*72)-(item.Height)*72));
+                        //pdfCanvas.AddXObjectAt(pageCopy, 0, );
+                        //pdfCanvas.Release();
+                        srcPdf.Close();
                     }
                 }
-                pdf.Save(outputFilePath);
+                pdfDocument.Close();
             } 
             catch(Exception ex)
             {
                 ErrorLogger.Log(ex.ToString());
             }
-        }
-
-        static void DrawImage(XGraphics gfx, string imagePath, double x, double y, double width, double height)
-        {
-            XImage image = XImage.FromFile(imagePath);
-            gfx.DrawImage(image, x, y, width, height);
         }
     }
 }

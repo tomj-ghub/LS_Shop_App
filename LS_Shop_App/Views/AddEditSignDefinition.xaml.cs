@@ -1,36 +1,26 @@
 ﻿using Dapper;
-using Ghostscript.NET.Rasterizer;
 using LS_Shop_App.Data;
 using LS_Shop_App.Models;
 using LS_Shop_App.Utilities;
 using LS_Shop_App.ViewModels;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Drawing.Imaging;
-using static System.Net.Mime.MediaTypeNames;
-using System.Diagnostics;
-using SixLabors.ImageSharp.PixelFormats;
-using Image = SixLabors.ImageSharp.Image;
-using System.Windows.Navigation;
-using LS_Shop_App.Utilities.Converters;
+using iText.Kernel.Pdf;
 
 namespace LS_Shop_App.Views
 {
+    // Copyright (C) 2024 Lily and Sparrow
+    // This program is free software: you can redistribute it and/or modify it under the terms of
+    // the GNU Affero General Public License as published by the Free Software Foundation, either
+    // version 3 of the License, or (at your option) any later version.
+
     /// <summary>
     /// Interaction logic for AddEditSignDefinition.xaml
     /// </summary>
@@ -207,34 +197,16 @@ namespace LS_Shop_App.Views
                 return;
             }
 
-            string newFile = AddEditSignDefinitionsImagePathTextBox.Text.Substring(0, AddEditSignDefinitionsImagePathTextBox.Text.Length - 4);
-            newFile += ".png";
+            string newFile = AddEditSignDefinitionsImagePathTextBox.Text;
 
             if (AddEditSignDefinitionsImagePathTextBox.Text.Substring(AddEditSignDefinitionsImagePathTextBox.Text.Length - 4).Equals(".pdf"))
             {
-                if (!File.Exists(newFile))
+                if (File.Exists(newFile))
                 {
-                    string ghostScriptPath = @"C:\Program Files\gs\gs10.02.1\bin\gswin64.exe";
-                    String ars = "-dNOPAUSE -q -r300 -sDEVICE=png16m -o" + newFile + " " + AddEditSignDefinitionsImagePathTextBox.Text;
-                    Process proc = new Process();
-                    proc.StartInfo.FileName = ghostScriptPath;
-                    proc.StartInfo.Arguments = ars;
-                    proc.StartInfo.CreateNoWindow = true;
-                    proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    proc.Start();
-                    proc.WaitForExit();
-
-                    AddEditSignDefinitionsImagePathTextBox.Text = newFile;
+                    AddEditSignDefinitionImage.Navigate(new Uri("about:blank"));
+                    AddEditSignDefinitionImage.Navigate(newFile);
                     PopulateImageSizeFields(newFile);
                 }
-                else
-                {
-                    AddEditSignDefinitionsImagePathTextBox.Text = newFile;
-                }
-            } 
-            else
-            {
-                PopulateImageSizeFields(AddEditSignDefinitionsImagePathTextBox.Text);
             }
         }
 
@@ -242,14 +214,11 @@ namespace LS_Shop_App.Views
         {
             try
             {
-                var imgObj = Image.Load<Rgba32>(imgPath);
-                if (imgObj != null)
-                {
-                    double calcWidth = Math.Round((double)imgObj.Width / 300, 2);
-                    double calcHeight = Math.Round((double)imgObj.Height / 300, 2);
-                    WidthText.Text = calcWidth.ToString()+"in";
-                    HeightText.Text = calcHeight.ToString()+"in";
-                }
+                PdfDocument srcPdf = new PdfDocument(new PdfReader(imgPath));
+                double calcWidth = Math.Round((double)srcPdf.GetFirstPage().GetPageSize().GetWidth()/72,2);
+                double calcHeight = Math.Round((double)srcPdf.GetFirstPage().GetPageSize().GetHeight()/72,2);
+                WidthText.Text = calcWidth.ToString() + "in";
+                HeightText.Text = calcHeight.ToString() + "in";
             }
             catch (Exception ex)
             {
