@@ -1,25 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Xobject;
 using LS_Shop_App.Data;
 using LS_Shop_App.Models;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using Image = SixLabors.ImageSharp.Image;
 
 // Copyright (C) 2024 Lily and Sparrow
 // This program is free software: you can redistribute it and/or modify it under the terms of
@@ -93,8 +79,32 @@ namespace LS_Shop_App.Utilities
         private PickListItem SplitNode(PickListItem node, double width, double height)
         {
             node.BoardName = this.boardName;
-            node.Down = new PickListItem { X = node.X, Y = node.Y - height, Width = node.Width, Height = node.Height - height };
-            node.Right = new PickListItem { X = node.X + width, Y = node.Y, Width = node.Width - width, Height = height };
+            //node.Down = new PickListItem { X = node.X, Y = node.Y - height, Width = node.Width, Height = node.Height - height };
+            //node.Right = new PickListItem { X = node.X + width, Y = node.Y, Width = node.Width - width, Height = height };
+            //return node;
+
+            double margin = this.lineWidth;
+
+            // Create a new node for the area below the sign.
+            // We subtract the margin from the height available below.
+            node.Down = new PickListItem
+            {
+                X = node.X,
+                Y = node.Y - height - margin,
+                Width = node.Width,
+                Height = node.Height - height - margin
+            };
+
+            // Create a new node for the area to the right.
+            // We subtract the margin from the width available to the right.
+            node.Right = new PickListItem
+            {
+                X = node.X + width + margin,
+                Y = node.Y,
+                Width = node.Width - width - margin,
+                Height = height
+            };
+
             return node;
         }
 
@@ -115,7 +125,8 @@ namespace LS_Shop_App.Utilities
                         PdfDocument srcPdf = new PdfDocument(new PdfReader(item.ImagePath));
                         PdfFormXObject pageCopy = srcPdf.GetFirstPage().CopyAsFormXObject(pdfDocument);
 
-                        pdfCanvas.AddXObjectAt(pageCopy, (float)(item.Fit.X*72)+(lineWidth*72), (float)((item.Fit.Y*72)-(item.Height)*72));
+                        //pdfCanvas.AddXObjectAt(pageCopy, (float)(item.Fit.X * 72) + (lineWidth * 72), (float)((item.Fit.Y * 72) - (item.Height) * 72));
+                        pdfCanvas.AddXObjectAt(pageCopy, (float)(item.Fit.X * 72), (float)((item.Fit.Y * 72) - (item.Height) * 72));
                         //pdfCanvas.AddXObjectAt(pageCopy, 0, );
                         //pdfCanvas.Release();
                         srcPdf.Close();

@@ -42,9 +42,16 @@ namespace LS_Shop_App.Views
 
         private void PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (!double.TryParse(e.Text, out _))
-            {
-                e.Handled = true;
+            //if (!double.TryParse(e.Text, out _))
+            //{
+            //    e.Handled = true;
+            //}
+
+            // Construct what the text would be if this input is accepted
+            string newText = LineMargin.Text.Insert(LineMargin.SelectionStart, e.Text); 
+            if (!double.TryParse(newText, out _)) 
+            { 
+                e.Handled = true; 
             }
         }
 

@@ -61,11 +61,11 @@
                   ItemsSource="{Binding PickListItem}">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn x:Name="PickListItemSelected" Header="Select" Binding="{Binding IsSelected}"/>
-                <DataGridTextColumn x:Name="PickList_FileName" Header="PickList FN" Binding="{Binding PickListFN}" Width="250" IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="PickList_FileName" Header="PickList" Binding="{Binding PickListFN}" Width="250" IsReadOnly="True"/>
                 <DataGridTextColumn x:Name="SignSku" Header="Sign Sku" Binding="{Binding Sku}" Width="200" IsReadOnly="True"/>
                 <DataGridTextColumn x:Name="Width" Header="Width" Binding="{Binding Width}" IsReadOnly="True"/>
                 <DataGridTextColumn x:Name="Height" Header="Height" Binding="{Binding Height}" IsReadOnly="True"/>
-                <DataGridCheckBoxColumn x:Name="PrintTwice" Header="Print Twice" Binding="{Binding PrintTwice, Converter={StaticResource StringToBoolConverter}}" IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="Syle" Header="Style" Binding="{Binding Style}" IsReadOnly="True"/>
                 <DataGridTextColumn x:Name="BoardName" Header="Board Name" Binding="{Binding BoardName}" Width="*" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>

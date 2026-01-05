@@ -46,20 +46,22 @@ namespace LS_Shop_App.Views
             LoadView(sign);
         }
 
-        public void LoadView(SignDefinition sign) 
+        public void LoadView(SignDefinition sign)
         {
             isUpdateMode = true;
             AddEditSignDefinitionsNameTextBox.Text = sign.Sku;
             AddEditSignDefinitionsImagePathTextBox.Text = sign.ImagePath;
             WidthText.Text = sign.Width.ToString()+"in";
             HeightText.Text = sign.Height.ToString()+"in";
-            AddEditSignDefinitionsCheckBox.IsChecked = false;
-            if (sign.PrintTwice.Equals("1"))
-            {
-                AddEditSignDefinitionsCheckBox.IsChecked = true;
-            }
+            //AddEditSignDefinitionsCheckBox.IsChecked = false;
+            //if (sign.PrintTwice.Equals("1"))
+            //{
+            //    AddEditSignDefinitionsCheckBox.IsChecked = true;
+            //}
             AddSignButton.Content = "Update Sign";
             AddEditSignDefinitionsNameTextBox.IsEnabled = false;
+            string newFile = AddEditSignDefinitionsImagePathTextBox.Text;
+            LoadWebBrowser(newFile);
         }
 
         private void AddEditSignDefinitionsImagePathTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -82,23 +84,21 @@ namespace LS_Shop_App.Views
         {
             if (ValidateInput())
             {
-                int printColor = (bool)AddEditSignDefinitionsCheckBox.IsChecked ? 1 : 0;
+                //int printColor = (bool)AddEditSignDefinitionsCheckBox.IsChecked ? 1 : 0;
 
                 SignDefinition def = new SignDefinition();
                 if (!isUpdateMode)
                 {
                     db.CreateSign(AddEditSignDefinitionsNameTextBox.Text,
                     AddEditSignDefinitionsImagePathTextBox.Text,
-                    WidthText.Text.Replace("in",""),
-                    HeightText.Text.Replace("in",""),
-                    printColor);
+                    WidthText.Text.Replace("in", ""),
+                    HeightText.Text.Replace("in", ""));
                 } else
                 {
                     db.UpdateSign(AddEditSignDefinitionsNameTextBox.Text,
                     AddEditSignDefinitionsImagePathTextBox.Text,
                     WidthText.Text.Replace("in",""),
-                    HeightText.Text.Replace("in",""),
-                    printColor); ;
+                    HeightText.Text.Replace("in",""));
                 }
                 
 
@@ -154,15 +154,15 @@ namespace LS_Shop_App.Views
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SuggestionText.Visibility = Visibility.Hidden;
+            //SuggestionText.Visibility = Visibility.Hidden;
             ErrorLabel.Visibility = Visibility.Hidden;
 
-            if (AddEditSignDefinitionsNameTextBox.Text.Count(c => c == '-') == 1 || AddEditSignDefinitionsNameTextBox.Text.Contains("-black"))
-            {
-                SuggestionText.Visibility = Visibility.Visible;
-                SuggestionText.Foreground = Brushes.Green;
-                SuggestionText.Content = "<- Will this board to be printed twice?";
-            }
+            //if (AddEditSignDefinitionsNameTextBox.Text.Count(c => c == '-') == 1 || AddEditSignDefinitionsNameTextBox.Text.Contains("-black"))
+            //{
+            //    SuggestionText.Visibility = Visibility.Visible;
+            //    SuggestionText.Foreground = Brushes.Green;
+            //    SuggestionText.Content = "<- Will this board to be printed twice?";
+            //}
         }
 
         private void ShowError(string error)
@@ -198,6 +198,15 @@ namespace LS_Shop_App.Views
             }
 
             string newFile = AddEditSignDefinitionsImagePathTextBox.Text;
+            LoadWebBrowser(newFile);
+        }
+
+        private void LoadWebBrowser(string newFile)
+        {
+            if (String.IsNullOrEmpty(newFile))
+            {
+                return;
+            }
 
             if (AddEditSignDefinitionsImagePathTextBox.Text.Substring(AddEditSignDefinitionsImagePathTextBox.Text.Length - 4).Equals(".pdf"))
             {

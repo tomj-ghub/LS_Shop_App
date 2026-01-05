@@ -33,20 +33,34 @@ namespace LS_Shop_App.Models
             get { return (this.Width * this.Height); }
         }
         
-        public string Color
+        public string Style
         {
             get 
             {
-                string sku2Parse = this.Sku;
-                string[] parts = sku2Parse.Split('-');
-                if (parts.Length >= 3)
+                if (!string.IsNullOrEmpty(this.Sku))
                 {
-                    return parts[2];
+                    var _style = "watercolor";
+
+                    // Find the first hyphen
+                    int firstHyphen = this.Sku.IndexOf('-');
+
+                    // If the first hyphen is not found, return empty.
+                    if (firstHyphen == -1)
+                    {
+                        return "";
+                    }
+
+                    // Find the second hyphen starting after the first one.
+                    int secondHyphen = this.Sku.IndexOf('-', firstHyphen + 1);
+
+                    // If the second hyphen is found and is not the last character, return the substring after it.
+                    if (secondHyphen != -1 && secondHyphen < this.Sku.Length - 1)
+                    {
+                        _style = this.Sku.Substring(secondHyphen + 1);
+                    }
+                    return _style;
                 }
-                else
-                {
-                    return "Transparent";
-                }
+                return "";
             }
         }
 
@@ -57,7 +71,7 @@ namespace LS_Shop_App.Models
             this.Sku = def.Sku;
             this.Width = def.Width;
             this.Height = def.Height;
-            this.PrintTwice = def.PrintTwice;
+            //this.PrintTwice = def.PrintTwice;
             this.ImagePath= def.ImagePath;
         }
     }

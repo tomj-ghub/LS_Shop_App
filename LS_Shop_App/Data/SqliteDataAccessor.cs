@@ -39,8 +39,7 @@ namespace LS_Shop_App.Data
                                     "Sku                    TEXT, " +
                                     "Width                  DOUBLE, " +
                                     "Height                 DOUBLE, " +
-                                    "ImagePath              TEXT," +
-                                    "PrintTwice             INT); ");
+                                    "ImagePath              TEXT); ");
                 }
             }
             catch (Exception e)
@@ -120,7 +119,7 @@ namespace LS_Shop_App.Data
             }
         }
 
-        public void CreateSignDefinition(string name, string path, string width, string height, int printColor)
+        public void CreateSignDefinition(string name, string path, string width, string height)
         {
             try
             {
@@ -130,13 +129,11 @@ namespace LS_Shop_App.Data
                                                     $"(Sku, " +
                                                     $"Width, " +
                                                     $"Height, " +
-                                                    $"ImagePath, " +
-                                                    $"PrintTwice) " +
+                                                    $"ImagePath) " +
                                              $"VALUES ('{name}', " +
                                                     $" '{width}', " +
                                                     $" '{height}', " +
-                                                    $" '{path}', " +
-                                                    $" '{printColor}');");
+                                                    $" '{path}');");
                 }
             }
             catch (Exception e) 
@@ -146,7 +143,7 @@ namespace LS_Shop_App.Data
             }
         }
 
-        public void UpdateSignDefinition(string sku, string path, string width, string height, int printTwice)
+        public void UpdateSignDefinition(string sku, string path, string width, string height)
         {
             try
             {
@@ -156,7 +153,6 @@ namespace LS_Shop_App.Data
                                                     $"Width = {width}, " +
                                                     $"Height = {height}, " +
                                                     $"ImagePath = '{path}', " +
-                                                    $"PrintTwice = {printTwice} " +
                                              $"WHERE Sku = '{sku}'; ");
                 }
             }
@@ -200,7 +196,7 @@ namespace LS_Shop_App.Data
                 using (IDbConnection cnn = new SQLiteConnection(GetDbConnectionString()))
                 {
                     //select p.BoardName, p.PickList_FN, d.Sku from PickListItems p join SignDefinitions d on p.SignDefinitionId = d.Sku
-                    returnList = cnn.Query<PickListItem>($"SELECT p.BoardName, p.PickListFN, p.Id, d.Sku, d.Width, d.Height, d.PrintTwice, d.ImagePath " +
+                    returnList = cnn.Query<PickListItem>($"SELECT p.BoardName, p.PickListFN, p.Id, d.Sku, d.Width, d.Height, d.ImagePath " +
                         $"FROM SignDefinitions d " +
                         $"JOIN PickListItems p " +
                         $"ON d.Sku = p.SignDefinitionId").AsEnumerable().ToList();

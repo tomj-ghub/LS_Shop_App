@@ -76,8 +76,8 @@
                 <DataGridTextColumn Binding="{Binding Name}" Width="100" MinWidth="100" Header="Name" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Dimensions}" Width="100" MinWidth="100" Header="Dimensions" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding ActualDimensions}" Width="100" MinWidth="100" Header="Actual" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Color}" Width="50" MinWidth="50" Header="Color" IsReadOnly="True"/>
-                <DataGridCheckBoxColumn Binding="{Binding PrintTwice, Converter={StaticResource StringToBoolConverter}}" Width="50" MinWidth="50" Header="Print Twice" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding Trim}" Width="50" MinWidth="50" Header="Trim" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Style}" Width="80" MinWidth="80" Header="Style" IsReadOnly="True" />
             </DataGrid.Columns>
             <DataGrid.ContextMenu>
                 <ContextMenu>

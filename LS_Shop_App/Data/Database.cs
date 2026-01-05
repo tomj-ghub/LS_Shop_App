@@ -57,14 +57,14 @@ namespace LS_Shop_App.Data
             return dataAccessor.GetSignDefinition(sku);
         }
 
-        public void CreateSign(string sku, string path, string width, string height, int printTwice)
+        public void CreateSign(string sku, string path, string width, string height)
         {
-            dataAccessor.CreateSignDefinition(sku, path, width, height, printTwice);
+            dataAccessor.CreateSignDefinition(sku, path, width, height);
         }
 
-        public void UpdateSign(string sku, string path, string width, string height, int printTwice)
+        public void UpdateSign(string sku, string path, string width, string height)
         {
-            dataAccessor.UpdateSignDefinition(sku, path, width, height, printTwice);
+            dataAccessor.UpdateSignDefinition(sku, path, width, height);
         }
 
         public void AddPickListItem(PickListItem item)

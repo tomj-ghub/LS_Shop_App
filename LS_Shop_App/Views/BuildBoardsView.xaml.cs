@@ -193,18 +193,17 @@ namespace LS_Shop_App.Views
         {
 
             //this is everything that has a definition "PrintTwice"
-            List<PickListItem> selectedItems_2Prints = new List<PickListItem>();
+            //List<PickListItem> selectedItems_2Prints = new List<PickListItem>();
             //this is everything that has no definition of "PrintTwice"
             List<PickListItem> selectedItems_1Print = new List<PickListItem>();
 
             //first, only grab the signs that the user has explicitly selected
             foreach (PickListItem item in this.pickListItems)
             {
-                if (item.IsSelected && Int32.Parse(item.PrintTwice) > 0) { selectedItems_2Prints.Add(item); }
-                else if (item.IsSelected) { selectedItems_1Print.Add(item); }
+                if (item.IsSelected) { selectedItems_1Print.Add(item); }
             }
 
-            if (selectedItems_2Prints.Any() || selectedItems_1Print.Any()) 
+            if (selectedItems_1Print.Any())
             {
                 boardInputs = new CreateBoardInputWindow();
                 boardInputs.ShowDialog();
@@ -213,20 +212,22 @@ namespace LS_Shop_App.Views
             int boardNum = 1;
             if (selectedItems_1Print.Count > 0)
             {
-                //grab all unique sign colors out of the selected signs
-                var colors = selectedItems_1Print.Select(PickListItem => PickListItem.Color).Distinct();
-                foreach (string color in colors)
-                {
-                    var colorSpecificEnumerable = from PickListItem item in selectedItems_1Print where item.Color == color select item;
-                    List<PickListItem> colorSpecificList = colorSpecificEnumerable.ToList();
-                    boardNum = CallBoardBuilder(colorSpecificList, boardNum, color);
-                }
+                boardNum = CallBoardBuilder(selectedItems_1Print, boardNum, "");
+
+                ////grab all unique sign colors out of the selected signs
+                //var colors = selectedItems_1Print.Select(PickListItem => PickListItem.Style).Distinct();
+                //foreach (string color in colors)
+                //{
+                //    var colorSpecificEnumerable = from PickListItem item in selectedItems_1Print where item.Style == color select item;
+                //    List<PickListItem> colorSpecificList = colorSpecificEnumerable.ToList();
+                //    boardNum = CallBoardBuilder(colorSpecificList, boardNum, color);
+                //}
             }
 
-            if (selectedItems_2Prints.Count > 0)
-            {
-                boardNum = CallBoardBuilder(selectedItems_2Prints, boardNum, "2Prints");
-            }
+            //if (selectedItems_2Prints.Count > 0)
+            //{
+            //    boardNum = CallBoardBuilder(selectedItems_2Prints, boardNum, "2Prints");
+            //}
             RefreshDataGrid();
             
         }
@@ -246,7 +247,8 @@ namespace LS_Shop_App.Views
 
             //define the board name
             string currentDate = DateTime.Now.ToString("MM.dd.yy.ss");
-            string boardName = currentDate + "-" + i + "-" + color;
+            //string boardName = currentDate + "-" + i + "-" + color;
+            string boardName = currentDate + "-" + i;
 
             BoardBuilder boardBuilder = new BoardBuilder(boardInputs.boardWidth, boardInputs.boardHeight, boardName, boardInputs.boardMargin, boardInputs.lineMargin);
             boardBuilder.Fit(sanitizedItems);
