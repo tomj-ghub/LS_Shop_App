@@ -249,8 +249,13 @@ namespace LS_Shop_App.Views
             string currentDate = DateTime.Now.ToString("MM.dd.yy.ss");
             //string boardName = currentDate + "-" + i + "-" + color;
             string boardName = currentDate + "-" + i;
+            if (boardInputs.BoardName.Text.Length > 0) 
+            {
+                boardName = boardInputs.BoardName.Text + "-" + i;
+            }
 
-            BoardBuilder boardBuilder = new BoardBuilder(boardInputs.boardWidth, boardInputs.boardHeight, boardName, boardInputs.boardMargin, boardInputs.lineMargin);
+
+            BoardBuilder boardBuilder = new BoardBuilder(boardInputs.boardWidth, boardInputs.boardHeight, boardName, boardInputs.boardMargin, boardInputs.lineMargin, boardInputs.targetDir);
             boardBuilder.Fit(sanitizedItems);
             i++;
             CallBoardBuilder(sanitizedItems, i, color);

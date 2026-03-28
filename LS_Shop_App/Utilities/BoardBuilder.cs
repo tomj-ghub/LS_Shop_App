@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using iText.IO.Font.Constants;
+using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Xobject;
 using LS_Shop_App.Data;
 using LS_Shop_App.Models;
+using System;
+using System.Collections.Generic;
 
 // Copyright (C) 2024 Lily and Sparrow
 // This program is free software: you can redistribute it and/or modify it under the terms of
@@ -22,6 +24,7 @@ namespace LS_Shop_App.Utilities
         public PickListItem Root { get; private set; }
 
         string boardName;
+        string targetDir;
         string outputFilePath;
         double canvasWidthIn, canvasHeightIn;
         float lineWidth;
@@ -29,10 +32,12 @@ namespace LS_Shop_App.Utilities
         Database db = new Database();
 
         //this is the size of the board
-        public BoardBuilder(double canvasWidthIn, double canvasHeightIn, string boardName, double boarderMargin, double lineWidth) 
+        public BoardBuilder(double canvasWidthIn, double canvasHeightIn, string boardName, double boarderMargin, double lineWidth, string targetDir)
         {
-            Root = new PickListItem { X = 0, Y = canvasHeightIn, Width = canvasWidthIn, Height = canvasHeightIn };
+            Root = new PickListItem { X = 0 + boarderMargin, Y = canvasHeightIn-boarderMargin, Width = canvasWidthIn-(boarderMargin*2), Height = canvasHeightIn-(boarderMargin*2) };
+
             this.boardName = boardName;
+            this.targetDir = targetDir;
             this.canvasWidthIn= canvasWidthIn;
             this.canvasHeightIn= canvasHeightIn;
             this.lineWidth = (float)lineWidth;
@@ -112,7 +117,7 @@ namespace LS_Shop_App.Utilities
         {
             try
             {
-                PdfWriter writer = new PdfWriter(Paths.Boards2Print + boardName + ".pdf");
+                PdfWriter writer = new PdfWriter( targetDir + "\\" + boardName + ".pdf");
                 PdfDocument pdfDocument = new PdfDocument(writer);
                 // Set the size of the new page
                 PageSize pageSize = new PageSize((float)canvasWidthIn*72, (float)canvasHeightIn*72); // Adjust the size as necessary
@@ -123,16 +128,37 @@ namespace LS_Shop_App.Utilities
                     if (item.Fit != null)
                     {
                         PdfDocument srcPdf = new PdfDocument(new PdfReader(item.ImagePath));
+                        PdfPage srcPage = srcPdf.GetFirstPage();
                         PdfFormXObject pageCopy = srcPdf.GetFirstPage().CopyAsFormXObject(pdfDocument);
+                        int pageRotation = srcPage.GetRotation();
 
-                        //pdfCanvas.AddXObjectAt(pageCopy, (float)(item.Fit.X * 72) + (lineWidth * 72), (float)((item.Fit.Y * 72) - (item.Height) * 72));
-                        pdfCanvas.AddXObjectAt(pageCopy, (float)(item.Fit.X * 72), (float)((item.Fit.Y * 72) - (item.Height) * 72));
-                        //pdfCanvas.AddXObjectAt(pageCopy, 0, );
-                        //pdfCanvas.Release();
+                        float posX = (float)(item.Fit.X * 72);
+                        float posY = (float)((item.Fit.Y * 72) - (item.Height) * 72);
+
+                        if(pageRotation == 90)
+                        {
+                            float srcPageHeight = srcPage.GetPageSize().GetHeight();
+                            pdfCanvas.SaveState();
+                            pdfCanvas.ConcatMatrix(0, 1, -1, 0, posX + srcPageHeight, posY);
+                            pdfCanvas.AddXObjectAt(pageCopy, 0, 0);
+                            pdfCanvas.RestoreState();
+                        }
+                        else
+                        {
+                            pdfCanvas.AddXObjectAt(pageCopy, posX, posY);
+                        }             
                         srcPdf.Close();
                     }
                 }
+
+                PdfFont font = PdfFontFactory.CreateFont(StandardFonts.TIMES_ROMAN);
+                pdfCanvas.BeginText();
+                pdfCanvas.SetFontAndSize(font, 12);
+                pdfCanvas.MoveText(75, 10);
+                pdfCanvas.ShowText(boardName);
+                pdfCanvas.EndText();
                 pdfDocument.Close();
+
             } 
             catch(Exception ex)
             {

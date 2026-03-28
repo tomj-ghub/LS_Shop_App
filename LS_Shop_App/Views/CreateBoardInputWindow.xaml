@@ -9,7 +9,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LS_Shop_App.Views"
         mc:Ignorable="d"
-        Title="Board Settings" Height="200" Width="300" Closing="Window_Closing">
+        Title="Board Settings" Height="250" Width="300" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -17,22 +17,30 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Content="Board Width (in.)"/>
-        <TextBox Grid.Row="0" Name="BoardWidth" Width="50" Margin="5" Text="96" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+        <Label Grid.Row="0" Content="Board Name"/>
+        <TextBox Grid.Row="0" Name="BoardName" Width="150" Margin="30,5,0,5" Text="" DataObject.Pasting="Pasting"/>
 
-        <Label Grid.Row="1" Content="Board Height (in.)"/>
-        <TextBox Grid.Row="1" Name="BoardHeight" Width="50" Margin="5" Text="48" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+        <Label Grid.Row="1" Content="Target Directory"/>
+        <TextBox Grid.Row="1" Name="TargetDir" Width="150" Margin="50,5,0,5" Text="" DataObject.Pasting="Pasting" MouseDoubleClick="TargetDirTextBox_MouseDoubleClick"/>
 
-        <Label Grid.Row="2" Content="Line Width (in.)"/>
-        <TextBox Grid.Row="2" Name="LineMargin" Width="50" Margin="5" Text ="0" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+        <Label Grid.Row="2" Content="Board Width (in.)"/>
+        <TextBox Grid.Row="2" Name="BoardWidth" Width="50" Margin="5" Text="96" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
 
-        <!--
-        <Label Grid.Row="3" Content="Board Margin (in.)"/>
-        <TextBox Grid.Row="3" Name="BoardMargin" Width="50" Margin="5" Text ="0" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
-        -->
-        
-        <Button Grid.Row="4" Content="OK" Width="75" Margin="5" Click="Button_Click" />
+        <Label Grid.Row="3" Content="Board Height (in.)"/>
+        <TextBox Grid.Row="3" Name="BoardHeight" Width="50" Margin="5" Text="48" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+
+        <Label Grid.Row="4" Content="Line Width (in.)"/>
+        <TextBox Grid.Row="4" Name="LineMargin" Width="50" Margin="5" Text ="0" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+
+        <Label Grid.Row="5" Content="Board Margin (in.)"/>
+        <TextBox Grid.Row="5" Name="BoardMargin" Width="50" Margin="5" Text =".75" PreviewTextInput="PreviewTextInput" DataObject.Pasting="Pasting"/>
+
+        <Button Grid.Row="6" Content="OK" Width="75" Margin="0,5,0,5" Click="Button_Click" />
     </Grid>
 </Window>

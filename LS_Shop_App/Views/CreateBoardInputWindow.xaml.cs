@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Win32;
+using System;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using WindowsAPICodePack.Dialogs;
 
 namespace LS_Shop_App.Views
 {
@@ -24,6 +16,8 @@ namespace LS_Shop_App.Views
         public double boardHeight { get; private set; }
         public double lineMargin { get; private set; }
         public double boardMargin { get; private set; }
+        public string boardName { get; private set; }
+        public string targetDir { get; private set; }
 
         public CreateBoardInputWindow()
         {
@@ -32,26 +26,25 @@ namespace LS_Shop_App.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            boardWidth = Double.Parse(BoardWidth.Text);
-            boardHeight = Double.Parse(BoardHeight.Text);
-            //lineMargin = Double.Parse(LineMargin.Text);
-            boardMargin = 0;
-
+            if (BoardWidth.Text.Length == 0 || BoardHeight.Text.Length == 0 || LineMargin.Text.Length == 0 || BoardMargin.Text.Length == 0
+                || TargetDir.Text.Length == 0) return;
+            if (Double.Parse(BoardMargin.Text) < .75) return;
+            if (!Directory.Exists(TargetDir.Text)) return;
             Close();
         }
 
         private void PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            //if (!double.TryParse(e.Text, out _))
-            //{
-            //    e.Handled = true;
-            //}
-
-            // Construct what the text would be if this input is accepted
-            string newText = LineMargin.Text.Insert(LineMargin.SelectionStart, e.Text); 
-            if (!double.TryParse(newText, out _)) 
+            string newLMText = LineMargin.Text.Insert(LineMargin.SelectionStart, e.Text); 
+            if (!double.TryParse(newLMText, out _)) 
             { 
                 e.Handled = true; 
+            }
+
+            string newBMText = BoardMargin.Text.Insert(BoardMargin.SelectionStart, e.Text);
+            if (!double.TryParse(newBMText, out _))
+            {
+                e.Handled = true;
             }
         }
 
@@ -76,7 +69,20 @@ namespace LS_Shop_App.Views
             boardWidth = Double.Parse(BoardWidth.Text);
             boardHeight = Double.Parse(BoardHeight.Text);
             lineMargin = Double.Parse(LineMargin.Text);
-            boardMargin = 0;
+            boardMargin = Double.Parse(BoardMargin.Text);
+            targetDir = TargetDir.Text;
+            boardName = BoardName.Text;
+        }
+
+        private void TargetDirTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+            var dialog = new CommonOpenFileDialog { IsFolderPicker = true, Title = "Select the target directory" };
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                TargetDir.Text = dialog.FileName;
+            }
         }
     }
 }

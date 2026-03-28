@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using iText.Kernel.Pdf;
+using iText.Kernel.Geom;
 
 namespace LS_Shop_App.Views
 {
@@ -198,7 +199,51 @@ namespace LS_Shop_App.Views
             }
 
             string newFile = AddEditSignDefinitionsImagePathTextBox.Text;
+            flipIt(newFile);
             LoadWebBrowser(newFile);
+        }
+
+        private void flipIt(string newFile)
+        {
+            if (!String.IsNullOrEmpty(newFile))
+            {
+                if (AddEditSignDefinitionsImagePathTextBox.Text.Substring(AddEditSignDefinitionsImagePathTextBox.Text.Length - 4).Equals(".pdf"))
+                {
+                    if (File.Exists(newFile))
+                    {
+                        try
+                        {
+                            bool didRotate = false;
+                            string dest = newFile.Replace(".pdf", "_rotated.pdf");
+
+                            using (var pdfDoc = new PdfDocument(new PdfReader(newFile), new PdfWriter(dest)))
+                            {
+                                PdfPage page = pdfDoc.GetFirstPage();
+
+                                if(page.GetPageSizeWithRotation().GetHeight() > page.GetPageSizeWithRotation().GetWidth())
+                                {
+                                    // If the page is in portrait orientation, rotate it to landscape
+                                    page.SetRotation(90);
+                                    didRotate = true;
+                                }
+                            }
+
+                            if (didRotate)
+                            {
+                                File.Replace(dest, newFile, newFile.Replace(".pdf", "_backup.pdf"));
+                            }
+                            if (File.Exists(dest))
+                            {
+                                File.Delete(dest);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            
+                        }
+                    }
+                }
+            }
         }
 
         private void LoadWebBrowser(string newFile)
@@ -224,8 +269,8 @@ namespace LS_Shop_App.Views
             try
             {
                 PdfDocument srcPdf = new PdfDocument(new PdfReader(imgPath));
-                double calcWidth = Math.Round((double)srcPdf.GetFirstPage().GetPageSize().GetWidth()/72,2);
-                double calcHeight = Math.Round((double)srcPdf.GetFirstPage().GetPageSize().GetHeight()/72,2);
+                double calcWidth = Math.Round((double)srcPdf.GetFirstPage().GetPageSizeWithRotation().GetWidth()/72,2);
+                double calcHeight = Math.Round((double)srcPdf.GetFirstPage().GetPageSizeWithRotation().GetHeight()/72,2);
                 WidthText.Text = calcWidth.ToString() + "in";
                 HeightText.Text = calcHeight.ToString() + "in";
             }
