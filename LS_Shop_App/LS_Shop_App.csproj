@@ -30,4 +30,8 @@
     <PackageReference Include="WindowsAPICodePack.Shell.CommonFileDialogs.Wpf" Version="1.1.5.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Static Assets\" />
+  </ItemGroup>
+
 </Project>
